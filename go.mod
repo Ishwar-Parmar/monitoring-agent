@@ -1,3 +1,3 @@
-module main
+module monitoring_agent
 
 go 1.22.3
