@@ -28,11 +28,12 @@ type RPCError struct {
 	Message string `json:"message"`
 }
 
-func sendRPCRequest(method string, params interface{}) (*JSONRPCResponse, error) {
-	// url := os.Getenv("NODE_URL")
-	//url := "http://127.0.0.1:8545"   // Use it when running main file without docker
-	url := "http://anvil-node:8545" // Use it when using docker
+const (
+	// url = "http://127.0.0.1:8545/" // Use it when running main file without docker
+	url = "http://anvil-node:8545" // Use it when using docker
+)
 
+func sendRPCRequest(method string, params interface{}) (*JSONRPCResponse, error) {
 	reqBody := JSONRPCRequest{
 		JSONRPC: "2.0",
 		Method:  method,
@@ -101,6 +102,13 @@ func main() {
 		fmt.Println("Sender: ", tx_details[1])
 		fmt.Println("Receiver: ", tx_details[2])
 		fmt.Println("Status: ", tx_details[3])
+
+		fmt.Println("\n*** Monitoring the transaction count in a block of given address ***")
+		tx_count_of_addr, err := getTransactionCountOfContractInBlock("0xef11D1c2aA48826D4c41e54ab82D1Ff5Ad8A64Ca", "latest")
+		if err != nil {
+			log.Fatalf("Failed to retrieve transaction count od given address: %v", err)
+		}
+		fmt.Println("Transaction counts: ", tx_count_of_addr)
 
 		time.Sleep(10 * time.Second)
 	}
@@ -202,4 +210,12 @@ func getTransactionReciept(t_id string) ([]string, error) {
 
 	res := []string{tx_details.Tx_id, tx_details.Sender, tx_details.To, tx_details.Status}
 	return res, nil
+}
+
+func getTransactionCountOfContractInBlock(address string, blockNo string) (string, error) {
+	tx_count, err := sendRPCRequest("eth_getTransactionCount", []interface{}{address, blockNo})
+	if err != nil {
+		log.Fatalf("Failed to retrieve transaction count of given address: %v", err)
+	}
+	return string(tx_count.Result), nil
 }

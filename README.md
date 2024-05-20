@@ -7,9 +7,10 @@
 - Docker
 - Docker Compose
 - Go
-- Anvil  --- *Using ``` curl -L https://foundry.paradigm.xyz | bash ```*
+- Anvil --- _Using `curl -L https://foundry.paradigm.xyz | bash`_
 
 ### Running the Monitoring Agent
+
 Clone the repository:
 
 git clone https://github.com/Ishwar-Parmar/monitoring-agent
@@ -20,19 +21,19 @@ Build and run the Go application:
 go build -o monitor_metrics/main.go
 ./main
 
-
 ### Running the metrics locally
+
 1. **Start local blockchain network:**
-   run in a new terminal``` anvil ```
+   run in a new terminal`anvil`
 
-2. **Go to monitor_metrics dir in cli** and 
-    run ``` go run . ```
-
+2. **Go to monitor_metrics dir in cli** and
+   run `go run .`
 
 ### Running the metrics using docker
-1. ``` sudo systemctl start docker ```
-2. ``` docker-compose build ```
-3. ``` docker-compose up ```
+
+1. `sudo systemctl start docker`
+2. `docker-compose build`
+3. `docker-compose up`
 
 ## Approach Explanation
 
@@ -99,3 +100,33 @@ _Steps to Implement_
 1.  Monitoring pending and queued transactions helps detect network congestion and transaction backlogs, enabling proactive optimization of network performance.
 
 2.  Detection of transaction malleability attacks, spam attacks, and transaction reordering threats by monitoring pending and queued transactions, allowing for timely mitigation of security risks.
+
+<!-- ----- DAPP Metrics ------ -->
+
+**Get transaction count of contract address in each block (getTransactionCountOfContractInBlock)**
+_Steps to Implement_
+
+1. Fetch transaction count of contract address in each block using eth_getTransactionCount method passing contract address and the block number.
+2. Parse the transaction from the result.
+
+**How to be used to detect vulnerabilities**
+
+1.  _Replay Attacks:_ An attacker could intercept and replay the eth_getTransactionCount request to trick the application into performing unintended actions based on the returned count.
+
+2.  _Denial of Service (DoS) Attacks:_ An attacker could flood the application with a large number of requests to the eth_getTransactionCount method, causing resource exhaustion and disrupting the application's normal operation.
+
+3.  _Privacy Concerns:_ The count of transactions from an address can reveal information about the address owner's activity, potentially compromising their privacy.
+
+**Get transaction reciept of given transaction (getTransactionReciept)**
+_Steps to Implement_
+
+1. Fetch transaction reciept using _eth_getTransactionReceipt_ method passing transaction id.
+2. Parse the transaction reciept from the result.
+
+**How to be used to detect vulnerabilities**
+
+1.  _Information Leakage:_ The transaction receipt contains sensitive information such as gas used, status, and logs. If this information is exposed to unauthorized parties, it could lead to privacy breaches or reveal details about the application's internal workings.
+
+2.  _Denial of Service (DoS) Attacks:_ An attacker could flood the application with a large number of requests to the eth_getTransactionReceipt method, causing resource exhaustion and disrupting the application's normal operation.
+
+3.  _Gas Price Manipulation:_ Attackers could analyze gas usage information in transaction receipts to manipulate gas prices or perform gas price oracle attacks.
