@@ -28,6 +28,7 @@ type RPCError struct {
 	Message string `json:"message"`
 }
 
+// URL for blockchain network
 const (
 	// url = "http://127.0.0.1:8545/" // Use it when running main file without docker
 	url = "http://anvil-node:8545" // Use it when using docker
